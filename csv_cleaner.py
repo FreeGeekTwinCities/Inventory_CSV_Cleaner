@@ -8,6 +8,7 @@
 from numpy import true_divide
 import pandas as pd
 import sys
+from datetime import datetime
 
 # if filepath is passed as argument, use that, otherwise prompt for one
 if len(sys.argv) == 2:
@@ -30,7 +31,7 @@ dropList = []
 for i in range(0,len(df)):
     # T/F criteria to drop row:
     hidden = df.loc[i,'Visible']=='No'
-    out = df.loc[i,'Stock']==0
+    out = df.loc[i,'Stock']=='0'
     unlimited = df.loc[i,'Stock']=='Unlimited'
 
     # for tag filtering, have to explicitly cast tags as a string since NaN is apparently considered a float? Sorry for the janky workaround. 
@@ -53,6 +54,9 @@ df.drop(index = dropList, inplace = True)
 # Sort primary: Product Page, secondary:SKU
 df = df.sort_values(by = ['Product Page','SKU'])
 
+# datetime object containing current date and time (used to generate new file name)
+now = datetime.now()
 
 # print to new CSV
-df.to_csv('completeCSV.csv', columns = ['Product Page', 'Title','SKU','Stock','Price'])
+completeFile = "Completed_" + now.strftime("%d%m%Y_%H%M") + ".csv"
+df.to_csv(completeFile, columns = ['Product Page', 'Title','SKU','Stock','Price'])
